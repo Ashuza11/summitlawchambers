@@ -1,25 +1,23 @@
 import Navbar from '@/components/Navbar';
-import { getDictionary } from '../dictionaries';
 import Footer from '@/components/Footer';
+import { getDictionary } from '../dictionaries';
 
 export async function generateStaticParams() {
     return [{ lang: 'en' }, { lang: 'fr' }, { lang: 'rw' }];
 }
 
-// Define the type for the params specifically
-type Params = { lang: 'en' | 'fr' | 'rw' };
-
-// Define the type for the layout props
-type LayoutProps = {
+type Props = {
     children: React.ReactNode;
-    params: Promise<Params>;
+    params: Promise<{ lang: string }>;
 };
 
-export default async function LangLayout({ children, params }: LayoutProps) {
-    // 1. Await params
+export default async function LangLayout({ children, params }: Props) {
     const { lang } = await params;
 
-    // 2. Await the dictionary
+    if (lang !== 'en' && lang !== 'fr' && lang !== 'rw') {
+        throw new Error(`Unsupported lang: ${lang}`);
+    }
+
     const dict = await getDictionary(lang);
 
     return (
