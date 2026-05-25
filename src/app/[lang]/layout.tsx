@@ -6,18 +6,20 @@ export async function generateStaticParams() {
     return [{ lang: 'en' }, { lang: 'fr' }, { lang: 'rw' }];
 }
 
-// NEXT.JS FIX: params is now a Promise
-type Props = {
+// Define the type for the params specifically
+type Params = { lang: 'en' | 'fr' | 'rw' };
+
+// Define the type for the layout props
+type LayoutProps = {
     children: React.ReactNode;
-    params: Promise<{ lang: 'en' | 'fr' | 'rw' }>;
+    params: Promise<Params>;
 };
 
-export default async function LangLayout({ children, params }: Props) {
-    // Await the params to resolve the Promise
-    const resolvedParams = await params;
-    const lang = resolvedParams.lang;
+export default async function LangLayout({ children, params }: LayoutProps) {
+    // 1. Await params
+    const { lang } = await params;
 
-    // Now it safely passes the string to the dictionary
+    // 2. Await the dictionary
     const dict = await getDictionary(lang);
 
     return (
